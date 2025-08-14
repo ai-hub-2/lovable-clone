@@ -12,9 +12,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    env:
-      # Set Android SDK path in temp directory for caching
-      ANDROID_SDK_ROOT: ${{ runner.temp }}/android-sdk
 
     steps:
       # -------------------------------------------------------------
@@ -44,7 +41,7 @@ jobs:
         id: android-sdk-cache
         uses: actions/cache@v3
         with:
-          path: ${{ env.ANDROID_SDK_ROOT }}
+          path: ${{ runner.temp }}/android-sdk
           # Fixed key with manifest file to update when versions change
           key: android-sdk-${{ runner.os }}-${{ hashFiles('android-sdk-manifest.txt') }}
           restore-keys: |
@@ -63,7 +60,7 @@ jobs:
             build-tools;34.0.0
           accept-android-sdk-licenses: true          # Accept core licenses
           log-accepted-android-sdk-licenses: true
-          android-sdk-root: ${{ env.ANDROID_SDK_ROOT }}
+          android-sdk-root: ${{ runner.temp }}/android-sdk
 
       # -------------------------------------------------------------
       # 5️⃣ Accept ALL remaining Android SDK licenses (Google-TV, Google-XR, etc.)
@@ -73,7 +70,7 @@ jobs:
           set -o pipefail
           # "yes" sends 'y' infinitely; if sdkmanager fails after acceptance
           # we continue without failure.
-          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          yes | ${{ runner.temp }}/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
       # -------------------------------------------------------------
       # 6️⃣ Cache Gradle (dependencies, wrapper)
