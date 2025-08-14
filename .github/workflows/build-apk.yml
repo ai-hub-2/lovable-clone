@@ -125,7 +125,7 @@ jobs:
       # 1️⃣1️⃣ (Optional) Decode keystore for Release signing
       # -------------------------------------------------------------
       - name: Decode keystore (Release signing)
-        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
+        if: secrets.KEYSTORE_BASE64 != ''
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
 
@@ -133,7 +133,7 @@ jobs:
       # 1️⃣2️⃣ Build signed Release APK (only if keystore available)
       # -------------------------------------------------------------
       - name: Build signed Release APK
-        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
+        if: secrets.KEYSTORE_BASE64 != ''
         uses: gradle/actions@v3
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -152,7 +152,7 @@ jobs:
       # 1️⃣3️⃣ Upload Release APK as artifact (if created)
       # -------------------------------------------------------------
       - name: Upload Release APK artifact
-        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
+        if: secrets.KEYSTORE_BASE64 != ''
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
@@ -163,7 +163,7 @@ jobs:
       # 1️⃣4️⃣ (Optional) Publish Release APK to Google Play
       # -------------------------------------------------------------
       - name: Publish to Google Play (internal track)
-        if: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON != '' && secrets.PLAY_PACKAGE_NAME != '' && secrets.KEYSTORE_BASE64 != '' }}
+        if: secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON != '' && secrets.PLAY_PACKAGE_NAME != '' && secrets.KEYSTORE_BASE64 != ''
         uses: google-github-actions/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
